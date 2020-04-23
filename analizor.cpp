@@ -258,12 +258,7 @@ int tranzitie_afd(int stare, int tip)
 
                 default: return 17;}
         }
-        case 18: {
-            switch (tip) {
-                case NEWLINE: return -1;
-
-                default: return 17;}
-        }
+        case 18: return 17;
 
         case 20: {
             switch (tip) {
@@ -470,14 +465,16 @@ TOKEN get_token(string text, int &pozitie_curenta)
         tip_caracter = get_tip(caracter);
         stare_urmatoare = tranzitie_afd(stare_curenta,tip_caracter);
 
-        //cout<<caracter<<" : "<<stare_curenta<<" -> "<<stare_urmatoare<<endl;
-
         if(stare_urmatoare != -1)
         {
+            if(stare_curenta == 18 && caracter == '\n')
+                valoare = valoare.substr(0,valoare.length()-1);
+            else
+                valoare += caracter;
+            
             stare_curenta = stare_urmatoare;
-            valoare += caracter;
             pozitie_curenta++;
-
+            
             if((token.tip = este_finala(stare_curenta)) != -1)
             {
                 tip_revert = token.tip;
@@ -551,20 +548,6 @@ TOKEN get_token(string text, int &pozitie_curenta)
 
 int main(int argc, char** argv)
 {
-
-        // ifstream infile(argv[1]);
-        // string line, text = "";
-        // // text.assign( (istreambuf_iterator<char>(infile)),(istreambuf_iterator<char>()) );
-        // while(infile >> line){
-        //     text += line;
-        //     if(infile.peek() == '\n')
-        //         text +='\n';
-        //     if(infile.peek() == ' ')
-        //         text +=' ';
-        // }
-        // cout<<text;
-        // infile.close();
-        
     if( argc != 2 )
     {
         cout<<"\nFolosire: analizor.exe InputFile\n";
@@ -600,7 +583,7 @@ int main(int argc, char** argv)
                 }                
                 else    
                 {
-                    cout<<"\nAnalizare finalizata cu SUCCESS!\n";
+                    cout<<"\nAnaliza finalizata cu SUCCESS!\n";
 
                     if(tabela_tokeni.size() == 0)
                     {
